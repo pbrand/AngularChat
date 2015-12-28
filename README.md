@@ -4,12 +4,10 @@ This repository contains two versions of the same chat application. The first us
 
 This chat application makes use of NodeJS and Socket.io. A **packages.json** is added to the repository, so 
 one can run:
-    npm install
+    ```npm install```
 from the root of the repository and all dependencies will get installed.  
 
-In order to run the application:
-    node index.js  
-Go to localhost:3000 in your browser.
+In order to run the application: ```node index.js``` and go to localhost:3000 in your browser.
 
 ## Repository info:
 A branch '**insecure**' is created which should be seen as the master branch of the insecure application. Deletion of this branch as wel as direct pushes to this branch are prohibited. Please create a new branch with this branch as a base for each feature and submit a pull request to get your changes into the 'insecure' branch.
@@ -32,5 +30,4 @@ The following databases are available for user: cs4105 pw: cs4105
 * AngularChat_insecure
 * AngularChat_secure
 
-One can "reset" the database by running:
-    mysql -u root -p < init_insecure.sql
+One can "reset" the database by running: ```mysql -u root -p < init_insecure.sql```
