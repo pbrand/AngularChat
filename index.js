@@ -14,7 +14,7 @@ io.on('connection', function(socket){
 socket.on('chat message', function(msg){
     console.log('user \''+ socket.id +'\' says: \"'+msg+'\"');
     //io.emit('chat message', msg); // This emits to all.
-    socket.broadcast.emit('chat message', msg); // Send message to everyone except the author
+    socket.broadcast.emit('chat message', {author: socket.id, message: msg}); // Send message to everyone except the author
   });
 });
 
