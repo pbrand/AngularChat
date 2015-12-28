@@ -9,23 +9,30 @@
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
       #chat_window { margin:0 ; padding: 0; width: 700px; }
-      #messages { list-style-type: none; padding: 0; margin-top:17px; margin-right:0px; width: 596px; }
-      #messages li { padding: 5px 10px; }
+      #messages { float: right; list-style-type: none; padding: 0; margin-top:17px; margin-right:0px; width: 596px; }
+      #messages li { font-style: italic; padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
-      #authors { list-style-type: none; margin-top:17px; padding: 0; width: 100px; }
-      #authors li { padding: 5px 10px; }
+      #authors { float: left; list-style-type: none; margin-top:17px; padding: 0; width: 100px; }
+      #authors li { font-weight: bold; padding: 5px 10px; }
+      #authors li:nth-child(odd) { background: #eee; }
     </style>
   </head>
   <body>
+    <div id="chat_window">
+    <ul id="authors"></ul>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
+    </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
     var socket = io();
+    
     var username = prompt("Enter username: ", "");
+    socket.emit('login', {name: username});
+    
     $('form').submit(function(){
         $('#authors').append($('<li>').text(username));
         $('#messages').append($('<li>').text($('#m').val())); // Append your own message to the list of messages
@@ -33,8 +40,9 @@
         $('#m').val('');
         return false;
     });
+    
     socket.on('chat message', function(data){
-        $('#authors').append($('<li>').text(data.author));
+        $('#authors').append($('<li>').text(data.user));
         $('#messages').append($('<li>').text(data.message));
     });
     </script>
