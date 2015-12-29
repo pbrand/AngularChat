@@ -28,7 +28,10 @@ The DocumentRoot of the webserver is set to: */var/www/html/AngularChat*, which 
 The local repository of the server should **only** pull from **either** the 'secure' or 'insecure' branch.
 
 ### Database info:
-The following databases are available for user: cs4105 pw: cs4105 
+user: root pw: cs4105
+user: cs4105 pw: cs4105
+
+The following databases are available for user: cs4105 
 * AngularChat_insecure
 * AngularChat_secure
 
