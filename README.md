@@ -20,7 +20,9 @@ user: cs4105 pw: cs4105
 user: root pw: fedora
 
 access the server via ssh from local machine: ssh cs4105@127.0.0.1 -p 2015  
-access the application from local machine: localhost:3000 (Make sure to forward port 3000 from your VM)
+access the application from local machine: localhost:3000.  
+
+In order for this to work, one should forward port 3000 remote to port 3000 locally in the VM Network settings of VirtualBox and port 3000 should be allowed by the firewall. One can open the port by running: ```sudo firewall-cmd --zone=FedoraServer --add-port=3000/tcp; sudo firewall-cmd --zone=FedoraServer --add-port=3000/tcp --permanent```
 
 The DocumentRoot of the webserver is set to: */var/www/html/AngularChat*, which is the root of the git repository.   
 The local repository of the server should **only** pull from **either** the 'secure' or 'insecure' branch.
