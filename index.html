@@ -35,9 +35,11 @@
     </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdn.rawgit.com/showdownjs/showdown/1.3.0/dist/showdown.min.js"></script>
     <script>
     var socket = io();
-    
+    var converter = new showdown.Converter();   
+ 
     var username = prompt("Enter username: ", "");
     socket.emit('login', {name: username});
     
@@ -48,8 +50,8 @@
         var authorList = '';
         for (var i = 0; i < data.length; i++){
             // We store html as a var then add to DOM after for efficiency
-            console.log(data[i].author +' '+ data[i].message);
-            messageList += '<li><i>' + data[i].message + '</i></li>';
+           // console.log(data[i].author +' '+ data[i].message);
+            messageList += '<li>' + converter.makeHtml(data[i].message) + '</li>';
             authorList += '<li><b>' + data[i].user + ':</b></li>';
         }
         $('#messages').html(messageList);
@@ -59,7 +61,7 @@
         
     socket.on('chat message', function(data){
         $('#authors').append($('<li>').text(data.user));
-        $('#messages').append($('<li>').text(data.message));
+        $('#messages').append($('<li>').text(converter.makeHtml(data.message)));
     });
     
     socket.on('users connected', function(data){
@@ -73,7 +75,11 @@
     
     $('form').submit(function(){
         $('#authors').append($('<li>').text(username));
-        $('#messages').append($('<li>').text($('#m').val())); // Append your own message to the list of messages.
+	var message = $('#m').val();
+	console.log(message);
+        message = converter.makeHtml(message);
+	console.log(message);
+        $('#messages').append($('<li>').html(message)); // Append your own message to the list of messages.
         socket.emit('chat message', $('#m').val()); // Send chat message to server.
         $('#m').val(''); // Clear input
         return false;
