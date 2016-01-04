@@ -30,13 +30,13 @@ var isInitmessages = false;
 var users = {};
 
 io.on('connection', function(socket){
-  socket.on('login', function(credentials) {
-    users[socket.id] = credentials.name; // Map this socket id to the username
+  socket.on('login', function(name) {
+    users[socket.id] = name; // Map this socket id to the username
     var userList = []; // Create a list with the users that are currently online
     Object.keys(users).forEach(function(key) {
         userList.push(users[key]);
     });
-    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+credentials.name+'\' connected **'});
+    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+name+'\' connected **'});
     console.log('user \''+ users[socket.id] +'\' connected');
     // Let all sockets know who online
     io.emit('users connected', userList);
