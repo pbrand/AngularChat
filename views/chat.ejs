@@ -1,40 +1,242 @@
-<!-- views/profile.ejs -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-	<title>Node Authentication</title>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-	<style>
-		body 		{ padding-top:80px; word-wrap:break-word; }
-	</style>
+    <title>Team SP Chat - Chatroom</title>
+    <!-- BOOTSTRAP CORE STYLE CSS -->
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+
 </head>
-<body>
-<div class="container">
+<body style="font-family:Verdana">
+  <div class="container">
+    <div class="row " style="padding-top:40px;">
+      <h3 class="text-center">Chatroom </h3>
+      <br /><br />
+      <div class="col-md-8">
+        <div class="panel panel-info">
+          <div class="panel-heading">Messages</div>
+            <div class="panel-body">
+              <ul class="media-list">
+                <li class="media">
+                  <div class="media-body">
+                    <div class="media">
+                      <a class="pull-left" href="#">User</a>
+                      <div class="media-body" >
+                        Donec sit amet ligula enim. Duis vel condimentum massa.
+                        Donec sit amet ligula enim. Duis vel condimentum massa.Donec sit amet ligula enim. 
+                        Duis vel condimentum massa.
+                        Donec sit amet ligula enim. Duis vel condimentum massa.
+                      </div>
+                    </div>
+                  </div>
+                </li>
+            </div>
+            <div class="panel-footer">
+                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Enter Message" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-info" type="button">SEND</button>
+                                    </span>
+                                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+               ONLINE USERS
+            </div>
+            <div class="panel-body">
+                <ul class="media-list">
 
-	<div class="page-header text-center">
-		<h1><span class="fa fa-anchor"></span> Profile Page</h1>
-		<a href="/logout" class="btn btn-default btn-sm">Logout</a>
-	</div>
+                                    <li class="media">
 
-	<div class="row">
+                                        <div class="media-body">
 
-		<!-- LOCAL INFORMATION -->
-		<div class="col-sm-6">
-			<div class="well">
-				<h3><span class="fa fa-user"></span> Local</h3>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.png" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Alex Deo | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
 
-					<p>
-						<strong>id</strong>: <%= user.id %><br>
-						<strong>username</strong>: <%= user.username %><br>
-						<strong>password</strong>: <%= user.password %>
-					</p>
+                                        </div>
+                                    </li>
+     <li class="media">
 
-			</div>
-		</div>
+                                        <div class="media-body">
 
-	</div>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.gif" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Jhon Rexa | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                    </li>
+                    <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.png" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Alex Deo | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                    <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.gif" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Jhon Rexa | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                     <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.png" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Alex Deo | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+     <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.gif" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Jhon Rexa | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                    <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.png" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Alex Deo | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                    <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" src="assets/img/user.gif" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <h5>Jhon Rexa | User </h5>
+                                                    
+                                                   <small class="text-muted">Active From 3 hours</small>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                </ul>
+                </div>
+            </div>
+        
+    </div>
 </div>
-</body>
-</html>
+  </div>
+
+    <script>
+    var socket = io();
+    
+    // var username = prompt("Enter username: ", "");
+    // socket.emit('login', {name: username});
+    
+    // Initial set of messages, loop through and add to list
+    socket.on('initial messages', function(data){
+        console.log('hello '+data);
+        var messageList = '';
+        var authorList = '';
+        for (var i = 0; i < data.length; i++){
+            // We store html as a var then add to DOM after for efficiency
+            console.log(data[i].author +' '+ data[i].message);
+            messageList += '<li><i>' + data[i].message + '</i></li>';
+            authorList += '<li><b>' + data[i].user + ':</b></li>';
+        }
+        $('#messages').html(messageList);
+        $('#authors').html(authorList);
+    });
+    
+        
+    socket.on('chat message', function(data){
+        $('#authors').append($('<li>').text(data.user));
+        $('#messages').append($('<li>').text(data.message));
+    });
+    
+    socket.on('users connected', function(data){
+          var userList = '';
+          for (var i = 0; i < data.length; i++){
+              // We store html as a var then add to DOM after for efficiency
+              userList += '<li><span>' + data[i] + '</span></li>';
+          }
+          $('#users').html(userList);
+      });
+    
+    $('form').submit(function(){
+        $('#authors').append($('<li>').text(username));
+        $('#messages').append($('<li>').text($('#m').val())); // Append your own message to the list of messages.
+        socket.emit('chat message', $('#m').val()); // Send chat message to server.
+        $('#m').val(''); // Clear input
+        return false;
+    });
+
+    </script>
+  </body>

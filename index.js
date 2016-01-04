@@ -1,34 +1,25 @@
-// server.js
-
-// set up ======================================================================
-// get all the tools we need
-var express  = require('express');
-var session  = require('express-session');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var morgan = require('morgan');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
 var mysql = require('mysql');
-var app      = express();
-var port     = process.env.PORT || 3000;
+var db = mysql.createConnection({
+	host: 'localhost',
+	user: 'cs4105',
+	password: 'cs4105',
+	database: 'AngularChat_insecure'
+});
 
-var passport = require('passport');
-var flash    = require('connect-flash');
 
-// configuration ===============================================================
-// connect to our database
-
-require('./config/passport')(passport); // pass passport for configuration
-
-var dbconfig = require('./config/database');
-var db = mysql.createConnection(dbconfig.connection);
-db.query('USE ' + dbconfig.database);
+// Log any errors connected to the db
+db.connect(function(err){
+    if (err) console.log(err)
+})
 
 // Define/initialize our global vars
 var messages = [];
 var isInitmessages = false;
 var users = {};
+
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/index.html');
+});
 
 io.on('connection', function(socket){
   socket.on('login', function(credentials) {
@@ -83,37 +74,6 @@ io.on('connection', function(socket){
   });
 });
 
-
-
-
-
-
-
-
-// set up our express application
-app.use(morgan('dev')); // log every request to the console
-app.use(cookieParser()); // read cookies (needed for auth)
-app.use(bodyParser.urlencoded({
-	extended: true
-}));
-app.use(bodyParser.json());
-
-app.set('view engine', 'ejs'); // set up ejs for templating
-
-// required for passport
-app.use(session({
-	secret: 'vidyapathaisalwaysrunning',
-	resave: true,
-	saveUninitialized: true
-} )); // session secret
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-app.use(flash()); // use connect-flash for flash messages stored in session
-
-
-// routes ======================================================================
-require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
-
-// launch ======================================================================
-app.listen(port);
-console.log('The magic happens on port ' + port);
+http.listen(3000, function(){
+  console.log('listening on *:3000');
+});
