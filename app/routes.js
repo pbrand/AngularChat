@@ -62,12 +62,6 @@ module.exports = function(app, passport) {
 		});
 	});
 
-		app.get('/admin', isLoggedIn, function(req, res) {
-		res.render('admin.ejs', {
-			user : req.user // get the user out of session and pass to template
-		});
-	});
-
 	// =====================================
 	// LOGOUT ==============================
 	// =====================================

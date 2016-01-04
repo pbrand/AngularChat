@@ -6,5 +6,4 @@ module.exports = {
 	'password' : 'cs4105'
     },
 	'database': 'AngularChat_insecure'
-    // 'users_table': 'users'
 };
