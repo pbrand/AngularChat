@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>Register</title>
+   </head>
+   <body>
+      <h2>Register Form</h2>
+      <form method="post" action="/signup">
+         <p>
+            <label for="username">username</label>
+            <input type="text" name="username" id="username"
+               placeholder="Please fill in your username" required="true"/>
+         </p>
+         <p>
+            <label for="password">password</label>
+            <input type="text" name="password" id="password"
+               placeholder="Please fill in your password" required="true"/>
+         </p>
+         <p>
+            <input type="submit" name="signup" id="signup" value="register"/>
+            <a href="/signin" title="sign in">sign in</a>
+         </p>
+      </form>
+   </body>
+</html>
