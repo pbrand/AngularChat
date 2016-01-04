@@ -7,21 +7,6 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">    
 
 </head>
-<!-- 
-<div id="chat_window">
-    <ul id="authors"></ul>
-    <ul id="messages"></ul>
-    <form id='target'>
-      <input id="m" autocomplete="off" /><input id='send' type='submit' value='Send'>
-    </form>
-    </div>
-    <div id="users_window">
-    Users (Online):
-    <ul id="users">
-      <!-- <li><strong>username</strong>: <%= user.username %></li>
-    </ul>
-    </div> -->
-
 <body style="font-family:Verdana">
   <div class="container">
     <div class="row " style="padding-top:40px;">
@@ -31,8 +16,7 @@
           <div class="panel panel-info">
             <div class="panel-heading">MESSAGES</div>
             <div class="panel-body">
-              <ul class="media-list" id='messages'>
-              </ul>
+              <ul class="media-list" id='messages'></ul>
             </div>
 
             <div class="panel-footer">
@@ -49,9 +33,7 @@
           <div class="panel panel-primary">
             <div class="panel-heading">ONLINE USERS</div>
             <div class="panel-body">
-              <ul id='users' class="media-list">
-                
-              </ul>
+              <ul id='users' class="media-list"></ul>
             </div>
           </div>
         </div>
@@ -72,7 +54,6 @@
     
     // Initial set of messages, loop through and add to list
     socket.on('initial messages', function(data){
-        console.log('hello ' + data);
         var messageList = '';
         for (var i = 0; i < data.length; i++){
             // We store html as a var then add to DOM after for efficiency
@@ -104,16 +85,15 @@
     function addMessage(){
       var messageValue = $('#m').val();
       console.log(messageValue);
+          // This is unsafe, as it can be used for XSS
           $('#messages').append(generateMessage(messageValue, '<%=user.username%>')); // Append your own message to the list of messages.
 
 
           socket.emit('chat message', $('#m').val()); // Send chat message to server.
           $('#m').val(''); // Clear input
           return false;
-      
     };
-      
     
     </script>
   </body>
-  </html>
+</html>
