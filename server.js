@@ -7,8 +7,8 @@ var session  = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var http = require('http');//.Server(express);
+var io = require('socket.io').listen(httpServer);
 var mysql = require('mysql');
 var app      = express();
 var port     = process.env.PORT || 3000;
@@ -61,17 +61,17 @@ io.on('connection', function(socket){
     }
   });
   
-  socket.on('disconnect', function(){
-    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+users[socket.id]+'\' disconnected **'});
-    console.log('user \''+ users[socket.id] + '\' disconnected');
-    delete users[socket.id];
-    var userList = [];
-    Object.keys(users).forEach(function(key) {
-        userList.push(users[key]);
-    });
-    // Let all sockets know who are connected
-    io.emit('users connected', userList);
-  });
+  // socket.on('disconnect', function(){
+  //   socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+users[socket.id]+'\' disconnected **'});
+  //   console.log('user \''+ users[socket.id] + '\' disconnected');
+  //   delete users[socket.id];
+  //   var userList = [];
+  //   Object.keys(users).forEach(function(key) {
+  //       userList.push(users[key]);
+  //   });
+  //   // Let all sockets know who are connected
+  //   io.emit('users connected', userList);
+  // });
   
   socket.on('chat message', function(msg){
     console.log('user \''+ users[socket.id] +'\' says: \"'+msg+'\"');
@@ -115,5 +115,8 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
-app.listen(port);
-console.log('The magic happens on port ' + port);
+// app.listen(port);
+// console.log('The magic happens on port ' + port);
+
+var httpServer = http.createServer(app);
+httpServer.listen(3000);
