@@ -13,10 +13,9 @@
 <div class="container">
 
 	<div class="page-header text-center">
-		<h1><span class="fa fa-anchor"></span> Profile Page</h1>
-		<a href="/logout" class="btn btn-default btn-sm">Logout</a>
+		<h1><span class="fa fa-anchor"></span> Admin Page</h1>
 	</div>
-
+	<button class="btn btn-danger" id='delete' onclick="deleteMessages()">DELETE MESSAGES</button>
 	<div class="row">
 
 		<!-- LOCAL INFORMATION -->
@@ -27,7 +26,6 @@
 					<p>
 						<strong>id</strong>: <%= user.id %><br>
 						<strong>username</strong>: <%= user.username %><br>
-						<strong>password</strong>: <%= user.password %>
 					</p>
 
 			</div>
@@ -36,5 +34,10 @@
 	</div>
 
 </div>
+<script>
+	function deleteMessages() {
+		alert(1);
+	};
+</script>
 </body>
 </html>
