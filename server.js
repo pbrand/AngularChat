@@ -60,17 +60,17 @@ io.on('connection', function(socket){
     }
   });
   
-  // socket.on('disconnect', function(){
-  //   socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+users[socket.id]+'\' disconnected **'});
-  //   console.log('user \''+ users[socket.id] + '\' disconnected');
-  //   delete users[socket.id];
-  //   var userList = [];
-  //   Object.keys(users).forEach(function(key) {
-  //       userList.push(users[key]);
-  //   });
-  //   // Let all sockets know who are connected
-  //   io.emit('users connected', userList);
-  // });
+  socket.on('disconnect', function(){
+    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+users[socket.id]+'\' disconnected **'});
+    console.log('user \''+ users[socket.id] + '\' disconnected');
+    delete users[socket.id];
+    var userList = [];
+    Object.keys(users).forEach(function(key) {
+      userList.push(users[key]);
+    });
+    // Let all sockets know who are connected
+    io.emit('users connected', userList);
+  });
   
   socket.on('chat message', function(msg){
     console.log('user \''+ users[socket.id] +'\' says: \"'+msg+'\"');
@@ -78,16 +78,10 @@ io.on('connection', function(socket){
     //io.emit('chat message', msg); // This emits to all.
     socket.broadcast.emit('chat message', {user: users[socket.id], message: msg}); // Send message to everyone except the author
     // Use node's db injection format to filter incoming data
-    db.query('INSERT INTO messages (message,user) VALUES (?)', [[msg,users[socket.id] ]]);
+    //db.query('INSERT INTO messages (message,user) VALUES (?)', [[msg,users[socket.id] ]]); // Safe
+    db.query("INSERT INTO messages (message,user) VALUES ('"+ msg + "','"+ users[socket.id] + "')"); // Unsafe
   });
 });
-
-
-
-
-
-
-
 
 // set up our express application
 app.use(morgan('dev')); // log every request to the console
