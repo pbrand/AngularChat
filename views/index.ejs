@@ -1,83 +1,24 @@
+<!-- views/index.ejs -->
 <!doctype html>
 <html>
-  <head>
-    <title>AngularChat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 700px; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #chat_window { margin:0 ; padding: 0; width: 700px; }
-      #users_window { border: 1px solid; margin:10px ; margin-left: 720px; padding: 10px 20px; position: fixed; width: 150px; }
-      #messages { float: right; list-style-type: none; padding: 0; margin-top:10px; margin-right:0px; width: 596px; }
-      #messages li { font-style: italic; padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #authors { float: left; list-style-type: none; margin-top:10px; padding: 0; width: 100px; }
-      #authors li { font-weight: bold; padding: 5px 10px; }
-      #authors li:nth-child(odd) { background: #eee; }
-      #users { color: #25DE00; margin: 0px 15px; }
-      #users li { font-weight: bold; padding: 5px 0px;}
-      #users li span { color: black; }
-    </style>
-  </head>
-  <body>
-    <div id="chat_window">
-    <ul id="authors"></ul>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-    </div>
-    <div id="users_window">
-    Users (Online):
-    <ul id="users"></ul>
-    </div>
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-    var socket = io();
-    
-    var username = prompt("Enter username: ", "");
-    socket.emit('login', {name: username});
-    
-    // Initial set of messages, loop through and add to list
-    socket.on('initial messages', function(data){
-        console.log('hello '+data);
-        var messageList = '';
-        var authorList = '';
-        for (var i = 0; i < data.length; i++){
-            // We store html as a var then add to DOM after for efficiency
-            console.log(data[i].author +' '+ data[i].message);
-            messageList += '<li><i>' + data[i].message + '</i></li>';
-            authorList += '<li><b>' + data[i].user + ':</b></li>';
-        }
-        $('#messages').html(messageList);
-        $('#authors').html(authorList);
-    });
-    
-        
-    socket.on('chat message', function(data){
-        $('#authors').append($('<li>').text(data.user));
-        $('#messages').append($('<li>').text(data.message));
-    });
-    
-    socket.on('users connected', function(data){
-          var userList = '';
-          for (var i = 0; i < data.length; i++){
-              // We store html as a var then add to DOM after for efficiency
-              userList += '<li><span>' + data[i] + '</span></li>';
-          }
-          $('#users').html(userList);
-      });
-    
-    $('form').submit(function(){
-        $('#authors').append($('<li>').text(username));
-        $('#messages').append($('<li>').text($('#m').val())); // Append your own message to the list of messages.
-        socket.emit('chat message', $('#m').val()); // Send chat message to server.
-        $('#m').val(''); // Clear input
-        return false;
-    });
+<head>
+	<title>Node Authentication</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<style>
+		body 		{ padding-top:80px; }
+	</style>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1><span class="fa fa-lock"></span> Node Authentication</h1>
 
-    </script>
-  </body>
+            <p>Login or Register with:</p>
+
+            <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Local Login</a>
+            <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Local Signup</a>
+        </div>
+    </div>
+</body>
+</html>
