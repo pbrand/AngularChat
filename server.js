@@ -7,11 +7,10 @@ var session  = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
-var http = require('http');//.Server(express);
-var io = require('socket.io').listen(httpServer);
 var mysql = require('mysql');
 var app      = express();
-var port     = process.env.PORT || 3000;
+var server = app.listen(3000);
+var io = require('socket.io').listen(server);
 
 var passport = require('passport');
 var flash    = require('connect-flash');
@@ -94,7 +93,7 @@ io.on('connection', function(socket){
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.urlencoded({
-	extended: true
+  extended: true
 }));
 app.use(bodyParser.json());
 
@@ -102,9 +101,9 @@ app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
 app.use(session({
-	secret: 'vidyapathaisalwaysrunning',
-	resave: true,
-	saveUninitialized: true
+  secret: 'vidyapathaisalwaysrunning',
+  resave: true,
+  saveUninitialized: true
 } )); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
@@ -116,7 +115,4 @@ require('./app/routes.js')(app, passport); // load our routes and pass in our ap
 
 // launch ======================================================================
 // app.listen(port);
-// console.log('The magic happens on port ' + port);
-
-var httpServer = http.createServer(app);
-httpServer.listen(3000);
+console.log('The magic happens on port 3000');
