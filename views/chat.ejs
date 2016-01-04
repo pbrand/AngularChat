@@ -4,30 +4,10 @@
     <title>Team SP Chat - Chatroom</title>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 700px; }
-      input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      #send { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #chat_window { margin:0 ; padding: 0; width: 700px; }
-      #users_window { border: 1px solid; margin:10px ; margin-left: 720px; padding: 10px 20px; position: fixed; width: 150px; }
-      #messages { float: right; list-style-type: none; padding: 0; margin-top:10px; margin-right:0px; width: 596px; }
-      #messages li { font-style: italic; padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #authors { float: left; list-style-type: none; margin-top:10px; padding: 0; width: 100px; }
-      #authors li { font-weight: bold; padding: 5px 10px; }
-      #authors li:nth-child(odd) { background: #eee; }
-      #users { color: #25DE00; margin: 0px 15px; }
-      #users li { font-weight: bold; padding: 5px 0px;}
-      #users li span { color: black; }
-    </style>
-    
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">    
 
 </head>
-
+<!-- 
 <div id="chat_window">
     <ul id="authors"></ul>
     <ul id="messages"></ul>
@@ -38,103 +18,80 @@
     <div id="users_window">
     Users (Online):
     <ul id="users">
-      <!-- <li><strong>username</strong>: <%= user.username %></li> -->
+      <!-- <li><strong>username</strong>: <%= user.username %></li>
     </ul>
-    </div>
+    </div> -->
 
-<!--
 <body style="font-family:Verdana">
   <div class="container">
     <div class="row " style="padding-top:40px;">
-      <h3 class="text-center">Chatroom </h3>
-      <br /><br />
-      <div class="col-md-8">
-        <div class="panel panel-info">
-          <div class="panel-heading">Messages</div>
+        <h3 class="text-center" >Chatroom</h3>
+        <br /><br />
+        <div class="col-md-8">
+          <div class="panel panel-info">
+            <div class="panel-heading">MESSAGES</div>
             <div class="panel-body">
-              <ul class="media-list">
-                <li class="media">
-                  <div class="media-body">
-                    <div class="media">
-                      <a class="pull-left" href="#">User</a>
-                      <div class="media-body" >
-                        Donec sit amet ligula enim. Duis vel condimentum massa.
-                        Donec sit amet ligula enim. Duis vel condimentum massa.Donec sit amet ligula enim. 
-                        Duis vel condimentum massa.
-                        Donec sit amet ligula enim. Duis vel condimentum massa.
-                      </div>
-                    </div>
-                  </div>
-                </li>
+              <ul class="media-list" id='messages'>
+              </ul>
+            </div>
+
+            <div class="panel-footer">
+              <div class="input-group">
+              <form id='target'>
+                <input id='m' type="text" class="form-control" autocomplete='off' placeholder="Enter Message" /><button class="btn btn-info" id='send' type="submit">SEND</button>
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">ONLINE USERS</div>
+            <div class="panel-body">
+              <ul id='users' class="media-list">
+                
               </ul>
             </div>
           </div>
         </div>
-      </div>
-      <div class="panel-footer">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Enter Message" />
-          <span class="input-group-btn">
-            <button class="btn btn-info" type="button">SEND</button>
-          </span>
-        </div>
-      </div>
     </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-primary">
-        <div class="panel-heading">Online Users</div>
-        <div class="panel-body">
-            <ul class="media-list">
-              <li class="media">
-                <div class="media-body">
-                  <div class="media">
-                    <a class="pull-left" href="#">
-                      <div class="media-body" >
-                        <h5>Alex Deo | User </h5>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>   
-    </div>
-  </div> -->
+  </div>
 <script>
-    // $(document).ready(function() {
       var socket = io();
+
+      function generateMessage(message, user) {
+        return '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#">' + user + '</a><div class="media-body">' + message + '<hr /></div></div></div></li>';
+      };
+
+      function generateOnline(user) {
+        return '<li class="media"><div class="media-body"><div class="media"><div class="media-body" ><h5>' + user + '</h5></div></div></div></li>'
+      };
     
-    // var username = prompt("Enter username: ", "");
     socket.emit('login', '<%=user.username%>');
     
     // Initial set of messages, loop through and add to list
     socket.on('initial messages', function(data){
-        console.log('hello '+data);
+        console.log('hello ' + data);
         var messageList = '';
-        var authorList = '';
         for (var i = 0; i < data.length; i++){
             // We store html as a var then add to DOM after for efficiency
-            console.log(data[i].author +' '+ data[i].message);
-            messageList += '<li><i>' + data[i].message + '</i></li>';
-            authorList += '<li><b>' + data[i].user + ':</b></li>';
+            console.log(data[i].user +' '+ data[i].message);
+            messageList += generateMessage(data[i].message, data[i].user);
         }
         $('#messages').html(messageList);
-        $('#authors').html(authorList);
     });
     
         
     socket.on('chat message', function(data){
-        $('#authors').append($('<li>').text(data.user));
-        $('#messages').append($('<li>').text(data.message));
+        $('#messages').append(generateMessage(data.message, data.user));
     });
     
     socket.on('users connected', function(data){
           var userList = '';
           for (var i = 0; i < data.length; i++){
               // We store html as a var then add to DOM after for efficiency
-              userList += '<li><span>' + data[i] + '</span></li>';
+              userList += generateOnline(data[i]);
           }
           $('#users').html(userList);
       });
@@ -145,8 +102,11 @@
     })
 
     function addMessage(){
-          $('#authors').append($('<li>').text('<%=user.username%>'));
-          $('#messages').append($('<li>').text($('#m').val())); // Append your own message to the list of messages.
+      var messageValue = $('#m').val();
+      console.log(messageValue);
+          $('#messages').append(generateMessage(messageValue, '<%=user.username%>')); // Append your own message to the list of messages.
+
+
           socket.emit('chat message', $('#m').val()); // Send chat message to server.
           $('#m').val(''); // Clear input
           return false;
@@ -156,3 +116,4 @@
     
     </script>
   </body>
+  </html>

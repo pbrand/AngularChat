@@ -66,7 +66,7 @@ io.on('connection', function(socket){
     delete users[socket.id];
     var userList = [];
     Object.keys(users).forEach(function(key) {
-      userList.push(users[key]);
+    userList.push(users[key]);
     });
     // Let all sockets know who are connected
     io.emit('users connected', userList);
