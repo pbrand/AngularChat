@@ -92,7 +92,9 @@ module.exports = function(passport) {
         },
         function(req, username, password, done) { // callback with email and password from our form
             // connection.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows){ // Safe
-            connection.query("SELECT * FROM users WHERE username = '"+username+"';", function(err, rows){
+            var query = "SELECT * FROM users WHERE username='"+username+"'";
+            console.log(query);
+            connection.query(query, function(err, rows){
                 if (err)
                     return done(err);
                 if (!rows.length) {
