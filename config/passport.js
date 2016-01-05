@@ -35,6 +35,7 @@ module.exports = function(passport) {
             // find a user whose email is the same as the forms email
             // we are checking to see if the user trying to login already exists
             connection.query("SELECT * FROM users WHERE username = '"+username+"';", function(err, rows) {
+
                 if (err)
                     return done(err);
                 if (rows.length) {
@@ -72,10 +73,6 @@ module.exports = function(passport) {
                     return done(err);
                 if (!rows.length) {
                     return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
-                }
-                // if the user is found but the password is wrong
-                if (password !== rows[0].password){
-                 return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));   //not hashed
                 }
                 // all is well, return successful user
                 return done(null, rows[0]);
