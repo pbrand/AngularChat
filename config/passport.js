@@ -5,7 +5,7 @@ var LocalStrategy   = require('passport-local').Strategy;
 
 // load up the user model
 var mysql = require('mysql');
-// var bcrypt = require('bcrypt-nodejs');
+var bcrypt = require('bcrypt-nodejs');
 var dbconfig = require('./database');
 var connection = mysql.createConnection(dbconfig.connection);
 
@@ -26,8 +26,8 @@ module.exports = function(passport) {
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
-        // connection.query("SELECT * FROM users WHERE id = ? ",[id], function(err, rows){ // Safe
-        connection.query("SELECT * FROM users WHERE id = '"+id+"';", function(err, rows){
+        connection.query("SELECT * FROM users WHERE id = ? ",[id], function(err, rows){ // Safe
+        // connection.query("SELECT * FROM users WHERE id = '"+id+"';", function(err, rows){
             done(err, rows[0]);
         });
     });
@@ -49,8 +49,8 @@ module.exports = function(passport) {
         function(req, username, password, done) {
             // find a user whose email is the same as the forms email
             // we are checking to see if the user trying to login already exists
-            // connection.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows) { // Safe
-            connection.query("SELECT * FROM users WHERE username = '"+username+"';", function(err, rows) {
+            connection.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows) { // Safe
+            // connection.query("SELECT * FROM users WHERE username = '"+username+"';", function(err, rows) {
                 if (err)
                     return done(err);
                 if (rows.length) {
@@ -60,13 +60,13 @@ module.exports = function(passport) {
                     // create the user
                     var newUserMysql = {
                         username: username,
-                        password: password//bcrypt.hashSync(password, null, null)  // use the generateHash function in our user model
+                        password: bcrypt.hashSync(password, null, null)  // use the generateHash function in our user model
                     };
 
-                    // var insertQuery = "INSERT INTO users ( username, password ) values (?,?)"; // Safe
-                    // connection.query(insertQuery,[newUserMysql.username, newUserMysql.password],function(err, rows) { // Safe
-                    var insertQuery = "INSERT INTO users ( username, password ) values ('" + newUserMysql.username + "','" + newUserMysql.password + "');";
-                    connection.query(insertQuery,function(err, rows) {
+                    var insertQuery = "INSERT INTO users ( username, password ) values (?,?)"; // Safe
+                    connection.query(insertQuery,[newUserMysql.username, newUserMysql.password],function(err, rows) { // Safe
+                    // var insertQuery = "INSERT INTO users ( username, password ) values ('" + newUserMysql.username + "','" + newUserMysql.password + "');";
+                    // connection.query(insertQuery,function(err, rows) {
                         newUserMysql.id = rows.insertId;
 
                         return done(null, newUserMysql);
@@ -91,10 +91,10 @@ module.exports = function(passport) {
             passReqToCallback : true // allows us to pass back the entire request to the callback
         },
         function(req, username, password, done) { // callback with email and password from our form
-            // connection.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows){ // Safe
-            var query = "SELECT * FROM users WHERE username='"+username+"'";
-            console.log(query);
-            connection.query(query, function(err, rows){
+            connection.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows){ // Safe
+            // var query = "SELECT * FROM users WHERE username='"+username+"'";
+            // console.log(query);
+            // connection.query(query, function(err, rows){
                 if (err)
                     return done(err);
                 if (!rows.length) {
@@ -102,12 +102,13 @@ module.exports = function(passport) {
                 }
 
                 // if the user is found but the password is wrong
-                if (password !== rows[0].password){
-                 return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));   //not hashed
-                }
+                // if (password !== rows[0].password){
+                //  return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));   //not hashed
+                // }
 
-                // if (!bcrypt.compareSync(password, rows[0].password))
-                //     return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+                if (!bcrypt.compareSync(password, rows[0].password)) {
+                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+                }
 
                 // all is well, return successful user
                 return done(null, rows[0]);

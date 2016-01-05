@@ -78,8 +78,8 @@ io.on('connection', function(socket){
     //io.emit('chat message', msg); // This emits to all.
     socket.broadcast.emit('chat message', {user: users[socket.id], message: msg}); // Send message to everyone except the author
     // Use node's db injection format to filter incoming data
-    //db.query('INSERT INTO messages (message,user) VALUES (?)', [[msg,users[socket.id] ]]); // Safe
-    db.query("INSERT INTO messages (message,user) VALUES ('"+ msg + "','"+ users[socket.id] + "')"); // Unsafe
+    db.query('INSERT INTO messages (message,user) VALUES (?)', [[msg,users[socket.id] ]]); // Safe
+    // db.query("INSERT INTO messages (message,user) VALUES ('"+ msg + "','"+ users[socket.id] + "')"); // Unsafe
   });
 
   socket.on('delete messages', function() {
