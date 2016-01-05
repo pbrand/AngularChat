@@ -1,23 +1,22 @@
-// server.js
-
-// set up ======================================================================
-// get all the tools we need
+// Import all the packages we need
 var express  = require('express');
 var session  = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mysql = require('mysql');
-var app      = express();
-var server = app.listen(3000);
-var io = require('socket.io').listen(server);
-
+var sanitizer = require('sanitizer');
 var passport = require('passport');
 var flash    = require('connect-flash');
+var app      = express();
 
-// configuration ===============================================================
+// Start our server
+var server = app.listen(3000);
+console.log('The magic happens on port 3000');
+var io = require('socket.io').listen(server);
+
+
 // connect to our database
-
 require('./config/passport')(passport); // pass passport for configuration
 
 var dbconfig = require('./config/database');
@@ -36,7 +35,7 @@ io.on('connection', function(socket){
     Object.keys(users).forEach(function(key) {
         userList.push(users[key]);
     });
-    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+name+'\' connected **'});
+    socket.broadcast.emit('chat message', {user: 'Team SP', message: '** User: \''+name+'\' connected **'});
     console.log('user \''+ users[socket.id] +'\' connected');
     // Let all sockets know who online
     io.emit('users connected', userList);
@@ -61,7 +60,7 @@ io.on('connection', function(socket){
   });
   
   socket.on('disconnect', function(){
-    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+users[socket.id]+'\' disconnected **'});
+    socket.broadcast.emit('chat message', {user: 'Team SP', message: '** User: \''+users[socket.id]+'\' disconnected **'});
     console.log('user \''+ users[socket.id] + '\' disconnected');
     delete users[socket.id];
     var userList = [];
@@ -73,18 +72,19 @@ io.on('connection', function(socket){
   });
   
   socket.on('chat message', function(msg){
-    console.log('user \''+ users[socket.id] +'\' says: \"'+msg+'\"');
+    // Sanitize the message to prevent XSS
+    msg = sanitizer.sanitize(msg);
     messages.push({user: users[socket.id], message: msg});
-    //io.emit('chat message', msg); // This emits to all.
     socket.broadcast.emit('chat message', {user: users[socket.id], message: msg}); // Send message to everyone except the author
     // Use node's db injection format to filter incoming data
-    //db.query('INSERT INTO messages (message,user) VALUES (?)', [[msg,users[socket.id] ]]); // Safe
-    db.query("INSERT INTO messages (message,user) VALUES ('"+ msg + "','"+ users[socket.id] + "')"); // Unsafe
+    db.query('INSERT INTO messages (message,user) VALUES (?)', [[msg,users[socket.id] ]]);
   });
 
   socket.on('delete messages', function() {
     console.log('Messages being deleted...');
+    // Deletes everything inside the messages table
     db.query("TRUNCATE TABLE messages");
+    // Clears the local variable and sends it to every user
     messages = [];
     io.emit('initial messages', messages);
     console.log('Messages deleted!')
@@ -113,9 +113,5 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 
-// routes ======================================================================
-require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
-
-// launch ======================================================================
-// app.listen(port);
-console.log('The magic happens on port 3000');
+// load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport);

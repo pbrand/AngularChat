@@ -23,7 +23,7 @@
             <div class="panel-footer">
               <div class="input-group">
               <form id='target'>
-                <input id='m' type="text" class="form-control" autocomplete='off' placeholder="Enter Message" /><button class="btn btn-info" id='send' type="submit">SEND</button>
+                <input id='m' type="text" class="form-control" maxlength="50" autocomplete='off' placeholder="Enter Message" /><button class="btn btn-info" id='send' type="submit">SEND</button>
               </form>
               </div>
             </div>
@@ -48,68 +48,75 @@
             </div>
           </div>
         </div>
+        <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">LOGOUT</div>
+            <div class="panel-body">
+            <a href='/logout' <button class="btn btn-warning" id='logout'>LOGOUT</button></a>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
 <script>
-      var socket = io();
+  // Get the socket package
+  var socket = io();
+  var converter = new showdown.Converter(); 
 
-      var converter = new showdown.Converter(); 
+  function generateMessage(message, user) {
+    return '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#">' + user + '</a><div class="media-body">' + message + '<hr /></div></div></div></li>';
+  };
 
-      function generateMessage(message, user) {
-        return '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#">' + user + '</a><div class="media-body">' + message + '<hr /></div></div></div></li>';
-      };
+  function generateOnline(user) {
+    return '<li class="media"><div class="media-body"><div class="media"><div class="media-body" ><h5>' + user + '</h5></div></div></div></li>'
+  };
 
-      function generateOnline(user) {
-        return '<li class="media"><div class="media-body"><div class="media"><div class="media-body" ><h5>' + user + '</h5></div></div></div></li>'
-      };
+  socket.emit('login', '<%=user.username%>');
     
-    socket.emit('login', '<%=user.username%>');
-    
-    // Initial set of messages, loop through and add to list
-    socket.on('initial messages', function(data){
-        var messageList = '';
-        for (var i = 0; i < data.length; i++){
-            // We store html as a var then add to DOM after for efficiency
-            console.log(data[i].user +' '+ data[i].message);
-            messageList += generateMessage(converter.makeHtml(data[i].message), data[i].user);
-        }
-        $('#messages').html(messageList);
-    });
-        
-    socket.on('chat message', function(data){
-        $('#messages').append(generateMessage(data.message, data.user));
-    });
-    
-    socket.on('users connected', function(data){
-          var userList = '';
-          for (var i = 0; i < data.length; i++){
-              // We store html as a var then add to DOM after for efficiency
-              userList += generateOnline(data[i]);
-          }
-          $('#users').html(userList);
-      });
-
-    $('#target').submit(function (e) {
-      addMessage();
-      e.preventDefault()
-    })
-
-    function addMessage(){
-      var messageValue = $('#m').val();
-      console.log(messageValue);
-          // This is unsafe, as it can be used for XSS
-          $('#messages').append(generateMessage(converter.makeHtml(messageValue), '<%=user.username%>')); // Append your own message to the list of messages.
-
-
-          socket.emit('chat message', $('#m').val()); // Send chat message to server.
-          $('#m').val(''); // Clear input
-          return false;
-    };
-
-    function deleteMessages() {
-      socket.emit('delete messages');
+  // Initial set of messages, loop through and add to list
+  socket.on('initial messages', function(data){
+    var messageList = '';
+    for (var i = 0; i < data.length; i++){
+      // We store html as a var then add to DOM after for efficiency
+      messageList += generateMessage(converter.makeHtml(data[i].message), data[i].user);
     }
+    $('#messages').html(messageList);
+  });
+        
+  socket.on('chat message', function(data){
+    $('#messages').append(generateMessage(data.message, data.user));
+  });
     
-    </script>
-  </body>
+  socket.on('users connected', function(data){
+    var userList = '';
+    for (var i = 0; i < data.length; i++){
+      // We store html as a var then add to DOM after for efficiency
+      userList += generateOnline(data[i]);
+    }
+    $('#users').html(userList);
+  });
+
+  // Prevent page reload after submission
+  $('#target').submit(function (e) {
+    addMessage();
+    e.preventDefault()
+  })
+
+  function addMessage(){
+    var messageValue = $('#m').text($('#m').val()).html();
+    if (messageValue.length < 1) {
+      return false;
+    }
+    $('#messages').append(generateMessage(converter.makeHtml(messageValue), '<%=user.username%>')); // Append your own message to the list of messages.
+    socket.emit('chat message', $('#m').val()); // Send chat message to server.
+    $('#m').val(''); // Clear input
+    return false;
+  };
+
+  function deleteMessages() {
+    socket.emit('delete messages');
+  }
+    
+  </script>
+</body>
 </html>

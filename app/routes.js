@@ -1,32 +1,25 @@
 // app/routes.js
 module.exports = function(app, passport) {
 
-	// =====================================
-	// HOME PAGE (with login links) ========
-	// =====================================
+	// The home page with login and register forms.
 	app.get('/', function(req, res) {
-		res.render('index.ejs'); // load the index.ejs file
+		res.render('index.ejs');
 	});
 
-	// =====================================
-	// LOGIN ===============================
-	// =====================================
-	// show the login form
+	// The login page
 	app.get('/login', function(req, res) {
-
 		// render the page and pass in any flash data if it exists
 		res.render('login.ejs', { message: req.flash('loginMessage') });
 	});
 
 	// process the login form
 	app.post('/login', passport.authenticate('local-login', {
-            successRedirect : '/chat', // redirect to the secure chat section
-            failureRedirect : '/login', // redirect back to the signup page if there is an error
+            successRedirect : '/chat', // redirect to the chat section
+            failureRedirect : '/login', // redirect back to the login page if there is an error
             failureFlash : true // allow flash messages
 		}),
         function(req, res) {
-            console.log("hello");
-
+        	// Create a cookie to use with the session
             if (req.body.remember) {
               req.session.cookie.maxAge = 1000 * 60 * 3;
             } else {
@@ -35,36 +28,28 @@ module.exports = function(app, passport) {
         res.redirect('/');
     });
 
-	// =====================================
-	// SIGNUP ==============================
-	// =====================================
-	// show the signup form
-	app.get('/signup', function(req, res) {
+	// The register page
+	app.get('/register', function(req, res) {
 		// render the page and pass in any flash data if it exists
-		res.render('signup.ejs', { message: req.flash('signupMessage') });
+		res.render('register.ejs', { message: req.flash('signupMessage') });
 	});
 
-	// process the signup form
-	app.post('/signup', passport.authenticate('local-signup', {
-		successRedirect : '/chat', // redirect to the secure profile section
-		failureRedirect : '/signup', // redirect back to the signup page if there is an error
+	// process the register form
+	app.post('/register', passport.authenticate('local-signup', {
+		successRedirect : '/chat', // redirect to the chat section
+		failureRedirect : '/register', // redirect back to the register page if there is an error
 		failureFlash : true // allow flash messages
 	}));
 
-	// =====================================
-	// PROFILE SECTION =========================
-	// =====================================
-	// we will want this protected so you have to be logged in to visit
-	// we will use route middleware to verify this (the isLoggedIn function)
+	// The chatroom page, only accessable when you are logged in.
+	// We will use route middleware to verify this (the isLoggedIn function)
 	app.get('/chat', isLoggedIn, function(req, res) {
 		res.render('chat.ejs', {
 			user : req.user // get the user out of session and pass to template
 		});
 	});
 
-	// =====================================
-	// LOGOUT ==============================
-	// =====================================
+	// Logout
 	app.get('/logout', function(req, res) {
 		req.logout();
 		res.redirect('/');
@@ -77,7 +62,6 @@ function isLoggedIn(req, res, next) {
 	// if user is authenticated in the session, carry on
 	if (req.isAuthenticated())
 		return next();
-
 	// if they aren't redirect them to the home page
 	res.redirect('/');
 }
