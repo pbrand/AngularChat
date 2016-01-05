@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Team SP Chat - Chatroom</title>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">  
+    <script src="https://cdn.rawgit.com/showdownjs/showdown/1.3.0/dist/showdown.min.js"></script>  
+
+</head>
+<body style="font-family:Verdana">
+  <div class="container">
+    <div class="row " style="padding-top:40px;">
+        <h3 class="text-center" >Chatroom</h3>
+        <br /><br />
+        <div class="col-md-8">
+          <div class="panel panel-info">
+            <div class="panel-heading">MESSAGES</div>
+            <div class="panel-body">
+              <ul class="media-list" id='messages'></ul>
+            </div>
+
+            <div class="panel-footer">
+              <div class="input-group">
+              <form id='target'>
+                <input id='m' type="text" class="form-control" autocomplete='off' placeholder="Enter Message" /><button class="btn btn-info" id='send' type="submit">SEND</button>
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% if (user.id == 1) { %>
+          <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">ADMIN PANEL</div>
+            <div class="panel-body">
+              <button class="btn btn-danger" id='delete' onclick="deleteMessages()">DELETE MESSAGES</button>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">ONLINE USERS</div>
+            <div class="panel-body">
+              <ul id='users' class="media-list"></ul>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+<script>
+      var socket = io();
+
+      var converter = new showdown.Converter(); 
+
+      function generateMessage(message, user) {
+        return '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#">' + user + '</a><div class="media-body">' + message + '<hr /></div></div></div></li>';
+      };
+
+      function generateOnline(user) {
+        return '<li class="media"><div class="media-body"><div class="media"><div class="media-body" ><h5>' + user + '</h5></div></div></div></li>'
+      };
+    
+    socket.emit('login', '<%=user.username%>');
+    
+    // Initial set of messages, loop through and add to list
+    socket.on('initial messages', function(data){
+        var messageList = '';
+        for (var i = 0; i < data.length; i++){
+            // We store html as a var then add to DOM after for efficiency
+            console.log(data[i].user +' '+ data[i].message);
+            messageList += generateMessage(converter.makeHtml(data[i].message), data[i].user);
+        }
+        $('#messages').html(messageList);
+    });
+        
+    socket.on('chat message', function(data){
+        $('#messages').append(generateMessage(data.message, data.user));
+    });
+    
+    socket.on('users connected', function(data){
+          var userList = '';
+          for (var i = 0; i < data.length; i++){
+              // We store html as a var then add to DOM after for efficiency
+              userList += generateOnline(data[i]);
+          }
+          $('#users').html(userList);
+      });
+
+    $('#target').submit(function (e) {
+      addMessage();
+      e.preventDefault()
+    })
+
+    function addMessage(){
+      var messageValue = $('#m').val();
+      console.log(messageValue);
+          // This is unsafe, as it can be used for XSS
+          $('#messages').append(generateMessage(converter.makeHtml(messageValue), '<%=user.username%>')); // Append your own message to the list of messages.
+
+
+          socket.emit('chat message', $('#m').val()); // Send chat message to server.
+          $('#m').val(''); // Clear input
+          return false;
+    };
+
+    function deleteMessages() {
+      socket.emit('delete messages');
+    }
+    
+    </script>
+  </body>
+</html>
