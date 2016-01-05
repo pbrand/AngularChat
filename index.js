@@ -1,6 +1,3 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
 var mysql = require('mysql');
 var db = mysql.createConnection({
 	host: 'localhost',
