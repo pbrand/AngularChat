@@ -35,7 +35,7 @@ io.on('connection', function(socket){
     Object.keys(users).forEach(function(key) {
         userList.push(users[key]);
     });
-    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+name+'\' connected **'});
+    socket.broadcast.emit('chat message', {user: 'Team SP', message: '** User: \''+name+'\' connected **'});
     console.log('user \''+ users[socket.id] +'\' connected');
     // Let all sockets know who online
     io.emit('users connected', userList);
@@ -60,7 +60,7 @@ io.on('connection', function(socket){
   });
   
   socket.on('disconnect', function(){
-    socket.broadcast.emit('chat message', {user: 'Admin', message: '** User: \''+users[socket.id]+'\' disconnected **'});
+    socket.broadcast.emit('chat message', {user: 'Team SP', message: '** User: \''+users[socket.id]+'\' disconnected **'});
     console.log('user \''+ users[socket.id] + '\' disconnected');
     delete users[socket.id];
     var userList = [];
