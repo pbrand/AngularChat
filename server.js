@@ -11,7 +11,7 @@ var mysql = require('mysql');
 var app      = express();
 var server = app.listen(3000);
 var io = require('socket.io').listen(server);
-
+var sanitizer = require('sanitizer');
 var passport = require('passport');
 var flash    = require('connect-flash');
 
@@ -73,9 +73,10 @@ io.on('connection', function(socket){
   });
   
   socket.on('chat message', function(msg){
-    msg = msg.replace(':javascript', '');
+    msg = sanitizer.sanitize(msg);
+    /*msg = msg.replace(':javascript', '');
     msg = msg.replace('<script>', '');
-    msg = msg.replace('</script>', '');
+    msg = msg.replace('</script>', '');*/
 
     console.log('user \''+ users[socket.id] +'\' says: \"'+msg+'\"');
     messages.push({user: users[socket.id], message: msg});
