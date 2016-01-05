@@ -73,6 +73,10 @@ io.on('connection', function(socket){
   });
   
   socket.on('chat message', function(msg){
+    msg = msg.replace(':javascript', '');
+    msg = msg.replace('<script>', '');
+    msg = msg.replace('</script>', '');
+
     console.log('user \''+ users[socket.id] +'\' says: \"'+msg+'\"');
     messages.push({user: users[socket.id], message: msg});
     //io.emit('chat message', msg); // This emits to all.

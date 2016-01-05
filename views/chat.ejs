@@ -95,7 +95,10 @@
     })
 
     function addMessage(){
-      var messageValue = $('#m').val();
+      var messageValue = $('#m').text($('#m').val()).html();
+      if (messageValue.length < 1) {
+        return false;
+      }
       console.log(messageValue);
           // This is unsafe, as it can be used for XSS
           $('#messages').append(generateMessage(converter.makeHtml(messageValue), '<%=user.username%>')); // Append your own message to the list of messages.
