@@ -28,6 +28,16 @@
             </div>
           </div>
         </div>
+        <% if (user.id == 1) { %>
+          <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">ADMIN PANEL</div>
+            <div class="panel-body">
+              <button class="btn btn-danger" id='delete' onclick="deleteMessages()">DELETE MESSAGES</button>
+            </div>
+          </div>
+        </div>
+        <% } %>
 
         <div class="col-md-4">
           <div class="panel panel-primary">
@@ -62,7 +72,6 @@
         }
         $('#messages').html(messageList);
     });
-    
         
     socket.on('chat message', function(data){
         $('#messages').append(generateMessage(data.message, data.user));
@@ -93,6 +102,10 @@
           $('#m').val(''); // Clear input
           return false;
     };
+
+    function deleteMessages() {
+      socket.emit('delete messages');
+    }
     
     </script>
   </body>

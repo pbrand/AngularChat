@@ -81,6 +81,15 @@ io.on('connection', function(socket){
     //db.query('INSERT INTO messages (message,user) VALUES (?)', [[msg,users[socket.id] ]]); // Safe
     db.query("INSERT INTO messages (message,user) VALUES ('"+ msg + "','"+ users[socket.id] + "')"); // Unsafe
   });
+
+  socket.on('delete messages', function() {
+    console.log('Messages being deleted...');
+    db.query("TRUNCATE TABLE messages");
+    messages = [];
+    io.emit('initial messages', messages);
+    console.log('Messages deleted!')
+  });
+
 });
 
 // set up our express application
