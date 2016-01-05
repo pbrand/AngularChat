@@ -50,7 +50,7 @@ module.exports = function(passport) {
             // find a user whose email is the same as the forms email
             // we are checking to see if the user trying to login already exists
             // connection.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows) { // Safe
-            connection.query("SELECT * FROM users WHERE username = '"+username+"';", function(err, rows) {
+	    connection.query("SELECT * FROM users WHERE username = '"+username+"';", function(err, rows) {
                 if (err)
                     return done(err);
                 if (rows.length) {
@@ -92,7 +92,7 @@ module.exports = function(passport) {
         },
         function(req, username, password, done) { // callback with email and password from our form
             // connection.query("SELECT * FROM users WHERE username = ?",[username], function(err, rows){ // Safe
-            var query = "SELECT * FROM users WHERE username='"+username+"'";
+            var query = "SELECT * FROM users WHERE username='"+username+"' AND password = '"+password+"'";
             console.log(query);
             connection.query(query, function(err, rows){
                 if (err)
@@ -100,7 +100,7 @@ module.exports = function(passport) {
                 if (!rows.length) {
                     return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
                 }
-
+		/*
                 // if the user is found but the password is wrong
                 if (password !== rows[0].password){
                  return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));   //not hashed
@@ -108,7 +108,7 @@ module.exports = function(passport) {
 
                 // if (!bcrypt.compareSync(password, rows[0].password))
                 //     return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
-
+		*/
                 // all is well, return successful user
                 return done(null, rows[0]);
             });
